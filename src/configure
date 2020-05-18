@@ -44,6 +44,7 @@ pinpad=no
 certdo=no
 hid_card_change=no
 factory_reset=no
+confirm_button=no
 ackbtn_support=yes
 flash_override=""
 # For emulation
@@ -100,6 +101,10 @@ for option; do
     sys1_compat=no ;;
   --enable-factory-reset)
     factory_reset=yes ;;
+  --enable-confirm-button)
+    confirm_button=yes ;;
+  --disable-confirm-button)
+    confirm_button=no ;;
   --disable-factory-reset)
     factory_reset=no ;;
   --with-dfu)
@@ -148,7 +153,10 @@ Configuration:
 			   STM32_PRIMER2
 			   STBEE
 			   STBEE_MINI
+			   TURTLE_AUTH
 			   FST_01_00 (unreleased version with 8MHz XTAL)
+	--enable-confirm-button
+			enable button to confirm requests	[no]
   --enable-factory-reset
 			support life cycle management	[no]
   --enable-debug	debug with virtual COM port	[no]
@@ -337,8 +345,17 @@ else
   echo "Acknowledge button is not supported"
 fi
 
+# --enable-confirm-button option
+if test "$confirm_button" = "yes"; then
+  CONFIRM_BUTTON_DEFINE="#define CONFIRM_BUTTON_SUPPORT 1"
+  echo "Confirm button is supported"
+else
+  CONFIRM_BUTTON_DEFINE="#undef CONFIRM_BUTTON_SUPPORT"
+  echo "Confirm button is NOT supported"
+fi
+
 ### !!! Replace following string of "FSIJ" to yours !!! ####
-SERIALNO="FSIJ-$(sed -e 's%^[^/]*/%%' <../VERSION)-"
+SERIALNO="TURTLE-$(sed -e 's%^[^/]*/%%' <../VERSION)-"
 
 SERIALNO_STR_LEN_DEFINE="#define SERIALNO_STR_LEN ${#SERIALNO}"
 
@@ -518,6 +535,7 @@ sed -e "s/@DEBUG_DEFINE@/$DEBUG_DEFINE/" \
     -e "s/@HID_CARD_CHANGE_DEFINE@/$HID_CARD_CHANGE_DEFINE/" \
     -e "s/@LIFE_CYCLE_MANAGEMENT_DEFINE@/$LIFE_CYCLE_MANAGEMENT_DEFINE/" \
     -e "s/@ACKBTN_DEFINE@/$ACKBTN_DEFINE/" \
+    -e "s/@CONFIRM_BUTTON_DEFINE@/$CONFIRM_BUTTON_DEFINE/" \
     -e "s/@SERIALNO_STR_LEN_DEFINE@/$SERIALNO_STR_LEN_DEFINE/" \
 	< config.h.in > config.h
 exit 0

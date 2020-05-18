@@ -932,6 +932,10 @@ cmd_pso (struct eventflag *ccid_comm)
   DEBUG_BINARY (apdu.cmd_apdu_data, apdu.cmd_apdu_data_len);
   DEBUG_SHORT (len);
 
+  #ifdef CONFIRM_BUTTON_SUPPORT
+    wait_button();
+  #endif
+
   if (P1 (apdu) == 0x9e && P2 (apdu) == 0x9a)
     {
       attr = gpg_get_algo_attr (GPG_KEY_FOR_SIGNING);
@@ -1135,6 +1139,10 @@ cmd_internal_authenticate (struct eventflag *ccid_comm)
   int cs;
 
   DEBUG_INFO (" - INTERNAL AUTHENTICATE\r\n");
+
+    #ifdef CONFIRM_BUTTON_SUPPORT
+        wait_button();
+    #endif
 
   if (P1 (apdu) != 0x00 || P2 (apdu) != 0x00)
     {
