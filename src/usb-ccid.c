@@ -941,7 +941,10 @@ ccid_send_status (struct ccid *c)
   usb_lld_write (c->epi->ep_num, ccid_reply, CCID_MSG_HEADER_SIZE);
 #endif
 
+#ifdef LED_BLINK_STATUS
   led_blink (LED_SHOW_STATUS);
+#endif
+
 #ifdef DEBUG_MORE
   DEBUG_INFO ("St\r\n");
 #endif

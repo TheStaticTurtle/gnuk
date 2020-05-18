@@ -46,6 +46,7 @@ hid_card_change=no
 factory_reset=no
 confirm_button=no
 ackbtn_support=yes
+led_blink_status=no
 flash_override=""
 # For emulation
 prefix=/usr/local
@@ -111,6 +112,8 @@ for option; do
     with_dfu=yes ;;
   --without-dfu)
     with_dfu=no ;;
+  --enable-blink-status)
+    led_blink_status=yes ;;
   #
   # For emulation
   #
@@ -155,6 +158,8 @@ Configuration:
 			   STBEE_MINI
 			   TURTLE_AUTH
 			   FST_01_00 (unreleased version with 8MHz XTAL)
+	--enable-blink-status
+			enable blinking for status
 	--enable-confirm-button
 			enable button to confirm requests	[no]
   --enable-factory-reset
@@ -354,6 +359,17 @@ else
   echo "Confirm button is NOT supported"
 fi
 
+# --enable-blink-status option
+if test "$led_blink_status" = "yes"; then
+  LED_BLINK_STATUS_DEFINE="#define LED_BLINK_STATUS 1"
+  echo "Confirm button is supported"
+else
+  LED_BLINK_STATUS_DEFINE="#undef LED_BLINK_STATUS"
+  echo "Confirm button is NOT supported"
+fi
+
+
+
 ### !!! Replace following string of "FSIJ" to yours !!! ####
 SERIALNO="TURTLE-$(sed -e 's%^[^/]*/%%' <../VERSION)-"
 
@@ -536,6 +552,7 @@ sed -e "s/@DEBUG_DEFINE@/$DEBUG_DEFINE/" \
     -e "s/@LIFE_CYCLE_MANAGEMENT_DEFINE@/$LIFE_CYCLE_MANAGEMENT_DEFINE/" \
     -e "s/@ACKBTN_DEFINE@/$ACKBTN_DEFINE/" \
     -e "s/@CONFIRM_BUTTON_DEFINE@/$CONFIRM_BUTTON_DEFINE/" \
+    -e "s/@LED_BLINK_STATUS_DEFINE@/$LED_BLINK_STATUS_DEFINE/" \
     -e "s/@SERIALNO_STR_LEN_DEFINE@/$SERIALNO_STR_LEN_DEFINE/" \
 	< config.h.in > config.h
 exit 0
